@@ -55,6 +55,10 @@ export const getUserProfile = async (req: Request, res: Response) => {
     const { id } = req.params;
     const currentUserId = req.user?.id;
 
+    if (!id || typeof id !== "string") {
+      return res.status(400).json({ error: "Valid user id is required" });
+    }
+
     const user = await prisma.user.findUnique({
       where: { id },
       select: {
@@ -67,7 +71,12 @@ export const getUserProfile = async (req: Request, res: Response) => {
           select: { followers: true, following: true, posts: true },
         },
         followers: currentUserId
-          ? { where: { followerId: currentUserId }, select: { id: true } }
+          ? {
+              where: currentUserId
+                ? { followerId: currentUserId }
+                : { followerId: "" },
+              select: { id: true },
+            }
           : false,
       },
     });
