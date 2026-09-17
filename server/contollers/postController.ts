@@ -271,8 +271,10 @@ export const getFeedPosts = async (req: Request, res: Response) => {
 export const toggleLike = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
-    const { postId } = req.params;
-
+    const postId = req.params.postId;
+    if (!postId || typeof postId !== "string") {
+      return res.status(400).json({ error: "Valid post id is required" });
+    }
     if (!userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
@@ -280,8 +282,6 @@ export const toggleLike = async (req: Request, res: Response) => {
     const existingLike = await prisma.like.findUnique({
       where: { userId_postId: { userId, postId } },
     });
-
-    console.log("Existing like:", existingLike);
 
     if (existingLike) {
       await prisma.like.delete({ where: { id: existingLike.id } });
@@ -301,7 +301,7 @@ export const toggleLike = async (req: Request, res: Response) => {
 export const addComment = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
-    const { postId } = req.params;
+    const postId = req.params.postId;
     const { text } = req.body;
 
     if (!userId) {
@@ -353,7 +353,11 @@ export const addComment = async (req: Request, res: Response) => {
 export const deleteComment = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
-    const { commentId } = req.params;
+    const commentId = req.params.commentId;
+
+    if (!commentId || typeof commentId !== "string") {
+      return res.status(400).json({ error: "Valid comment id is required" });
+    }
 
     if (!userId) {
       return res.status(401).json({ error: "Not authenticated" });
@@ -393,7 +397,7 @@ export const deleteComment = async (req: Request, res: Response) => {
 // get post likes /api/posts/:postId/likes
 export const getPostLikes = async (req: Request, res: Response) => {
   try {
-    const { postId } = req.params;
+    const postId = req.params.postId;
 
     if (!postId || typeof postId !== "string") {
       return res.status(400).json({ error: "Valid post id is required" });
@@ -423,7 +427,7 @@ export const getPostLikes = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Get post likes error:", error);
-    res.status(500).json({ error: getErrorMessage(error) });
+    res.status(500).json({ error: "Something went wrong" });
   }
 };
 
@@ -431,8 +435,12 @@ export const getPostLikes = async (req: Request, res: Response) => {
 export const updateComment = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
-    const { commentId } = req.params;
+    const commentId = req.params.commentId;
     const { text } = req.body;
+
+    if (!commentId || typeof commentId !== "string") {
+      return res.status(400).json({ error: "Valid comment id is required" });
+    }
 
     if (!userId) {
       return res.status(401).json({ error: "Not authenticated" });
