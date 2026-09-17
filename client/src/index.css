@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/*
+  Theme tokens — change values here and they update everywhere
+  you've used the matching class (bg-brand, text-surface, etc).
+
+  Usage examples:
+    bg-brand          text-brand
+    bg-brand-dark     hover:bg-brand-dark
+    bg-surface        bg-surface-dark
+    text-body         text-muted
+    bg-danger         text-danger
+    bg-success        text-success
+*/
+@theme {
+  /* Brand — your primary action/accent color */
+  --color-brand: #2563eb;
+  --color-brand-dark: #1d4ed8;
+  --color-brand-light: #60a5fa;
+
+  /* Surfaces — backgrounds, panels, navbars */
+  --color-surface: #ffffff;
+  --color-surface-dark: #1f2937;
+  --color-surface-muted: #f3f4f6;
+
+  /* Text */
+  --color-body: #111827;
+  --color-muted: #6b7280;
+  --color-inverted: #ffffff;
+
+  /* Status colors */
+  --color-danger: #ef4444;
+  --color-danger-dark: #dc2626;
+  --color-success: #22c55e;
+  --color-success-dark: #16a34a;
+  --color-warning: #f59e0b;
+}

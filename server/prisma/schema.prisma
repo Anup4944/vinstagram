@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// USER
+// ─────────────────────────────────────────────
+model User {
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  name                String
+  password            String
+  bio                 String?
+  avatar              Avatar?
+  resetPasswordToken  String?   @unique
+  resetPasswordExpiry DateTime?
+  createdAt           DateTime  @default(now())
+  posts               Post[]    @relation("UserPosts")
+  followers           Follow[]  @relation("Following")
+  following           Follow[]  @relation("Follower")
+  comments            Comment[]
+  likes               Like[]
+}
+
+model Avatar {
+  id       String @id @default(uuid())
+  publicId String @map("public_id")
+  url      String
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────
+// POST
+// ─────────────────────────────────────────────
+
+model PostImage {
+  id       String @id @default(uuid())
+  publicId String @map("public_id")
+  url      String
+
+  postId String @unique
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id        String     @id @default(uuid())
+  caption   String
+  image     PostImage?
+  createdAt DateTime   @default(now())
+
+  ownerId  String
+  owner    User      @relation("UserPosts", fields: [ownerId], references: [id], onDelete: Cascade)
+  likes    Like[]
+  comments Comment[]
+}
+
+// ─────────────────────────────────────────────
+// LIKE  (join table for User ↔ Post)
+// ─────────────────────────────────────────────
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+// ─────────────────────────────────────────────
+// COMMENT
+// ─────────────────────────────────────────────
+model Comment {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────
+// FOLLOW  (join table for User ↔ User)
+// ─────────────────────────────────────────────
+model Follow {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  followerId String
+  follower   User   @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+
+  followingId String
+  following   User   @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}

@@ -1,0 +1,172 @@
+*********************************************** USER RELATED REQUESTS ***********************************************
+
+
+### Register a new user
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "arah Chen",
+  "email": "arah@example.com",
+  "password": "secret123",
+  "bio": "Mountains > everything 🏔️",
+  "avatar": {
+    "public_id": "sample_public_id",
+    "url": "https://example.com/avatar.jpg"
+  }
+}
+
+
+### Login with existing user
+###
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "lok@example.com",
+  "password": "secret123"
+}
+
+### Forgot password
+POST http://localhost:5000/api/auth/forgot-password 
+Content-Type: application/json
+
+{
+  "email": "lok@example.com"
+}
+
+### Reset password
+POST http://localhost:5000/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "your_reset_token",
+  "newPassword": "newSecurePassword123"
+}
+
+### Delete user account
+DELETE http://localhost:5000/api/users/profile/5dde5a32-8fb4-4b5c-81c0-4d15e67a7681
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZGRlNWEzMi04ZmI0LTRiNWMtODFjMC00ZDE1ZTY3YTc2ODEiLCJpYXQiOjE3ODY0Mjk3MTUsImV4cCI6MTc4NjQzMzMxNX0.2ZWPnT9t8Hg9KER88xqhR0ylblcEDVDmEgnvph7QM0Q
+Content-Type: application/json
+
+{
+  "password": "secret123"
+}
+
+
+### Change password
+PUT http://localhost:5000/api/users/password/9b27a98b-0f1e-49f5-a09d-dd9d254a356b
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5YjI3YTk4Yi0wZjFlLTQ5ZjUtYTA5ZC1kZDlkMjU0YTM1NmIiLCJpYXQiOjE3ODY0MzI3MjUsImV4cCI6MTc4NjQzNjMyNX0.NaaTofeB8uzgjs5snx_mdmDxjsaONeDwDpLsbSyi7_Y
+Content-Type: application/json
+
+{
+  "currentPassword": "secret123",
+  "newPassword": "vangun45"
+}
+
+
+### Get user by id
+###
+GET http://localhost:5000/api/users/1b840d86-6227-41ba-8cb7-319ca2916942
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjg0MGQ4Ni02MjI3LTQxYmEtOGNiNy0zMTljYTI5MTY5NDIiLCJpYXQiOjE3ODc3MTY0NjgsImV4cCI6MTc4NzcyMDA2OH0.8ThU9ysw5guqskfWrAt8IE9JRez5Sh2gJ4qTvNpZrQw
+
+
+### Get all user
+###
+GET http://localhost:5000/api/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5YjI3YTk4Yi0wZjFlLTQ5ZjUtYTA5ZC1kZDlkMjU0YTM1NmIiLCJpYXQiOjE3ODY0MzI2NTgsImV4cCI6MTc4NjQzNjI1OH0.l6Lg3lzHcGqI7MXxHlJrswZCY3qmati92iDN4wur9Io
+
+### Edit profile
+PUT http://localhost:5000/api/users/profile/eedff029-145d-4a8f-9115-1ae3ede76227
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5YjI3YTk4Yi0wZjFlLTQ5ZjUtYTA5ZC1kZDlkMjU0YTM1NmIiLCJpYXQiOjE3ODY0MzI2NTgsImV4cCI6MTc4NjQzNjI1OH0.l6Lg3lzHcGqI7MXxHlJrswZCY3qmati92iDN4wur9Io
+
+{
+  "name": "James Chen",
+  "email": "james@example.com",
+  "password": "secret123",
+  "bio": "Mountains > everything 🏔️",
+  "avatar": {
+    "public_id": "sample_public_id",
+    "url": "https://example.com/avatar.jpg"
+  }
+}
+
+### Toggle follow/unfollow user
+POST http://localhost:5000/api/users/follow/23b62350-8e92-4c0b-9752-0aa9bcb3a068
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjg0MGQ4Ni02MjI3LTQxYmEtOGNiNy0zMTljYTI5MTY5NDIiLCJpYXQiOjE3ODc3MDgyODYsImV4cCI6MTc4NzcxMTg4Nn0.jkkw7OlmZsb4FWc2Mxka1LW9SEkQw8AdKZEzxCV2gT0
+
+### Get followers of a user
+GET http://localhost:5000/api/users/1b840d86-6227-41ba-8cb7-319ca2916942/followers
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjg0MGQ4Ni02MjI3LTQxYmEtOGNiNy0zMTljYTI5MTY5NDIiLCJpYXQiOjE3ODc3MDg0NTcsImV4cCI6MTc4NzcxMjA1N30.-7JJFDGwuHIu4rWolyC1_NfpvzEcVOJ2K4h9uQ_p5_8
+
+
+### Get following of a user
+GET http://localhost:5000/api/users/1b840d86-6227-41ba-8cb7-319ca2916942/following
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjg0MGQ4Ni02MjI3LTQxYmEtOGNiNy0zMTljYTI5MTY5NDIiLCJpYXQiOjE3ODc3MDg0NTcsImV4cCI6MTc4NzcxMjA1N30.-7JJFDGwuHIu4rWolyC1_NfpvzEcVOJ2K4h9uQ_p5_8
+
+
+*********************************************** POST RELATED REQUESTS ***********************************************
+
+### Get all posts 
+GET http://localhost:5000/api/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNTAyMmUwZi1jMDVkLTQ5MTItYWEyYi0xOWUxNDM5ZjI0ODAiLCJpYXQiOjE3ODYwMTQ1OTAsImV4cCI6MTc4NjAxODE5MH0.-GsIFFGb7DhqcSUuvEimFb0aABznlaZFK-fv5Zpnzp8
+
+
+### Create a post
+###
+POST http://localhost:5000/api/posts/41a00c7a-e9a4-40ae-9adf-85732d609a54
+Content-Type: application/json 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNTAyMmUwZi1jMDVkLTQ5MTItYWEyYi0xOWUxNDM5ZjI0ODAiLCJpYXQiOjE3ODQzNjE0MzgsImV4cCI6MTc4NDM2NTAzOH0.P2HfNodGG_7YL6vjBzWfrO7Dmw8WcirdkbxZtYzoUUc
+
+{
+  "caption": "This is a new post!",
+  "avatar": {
+    "public_id": "sample_public_id",
+    "url": "https://example.com/avatar.jpg"
+  } 
+}
+
+### Get post by userId
+###
+GET http://localhost:5000/api/posts/user/1b840d86-6227-41ba-8cb7-319ca2916942
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjg0MGQ4Ni02MjI3LTQxYmEtOGNiNy0zMTljYTI5MTY5NDIiLCJpYXQiOjE3ODg0MTAxMTIsImV4cCI6MTc4ODQxMzcxMn0.1ATLkIaqT0IQuZeDrpuvc_Fxh27rUJQ4BKs-jlBE4o0
+
+### Delete post by postId
+###
+DELETE http://localhost:5000/api/posts/3c634728-21cd-4f80-83ea-161c93578d53
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjg0MGQ4Ni02MjI3LTQxYmEtOGNiNy0zMTljYTI5MTY5NDIiLCJpYXQiOjE3ODY3OTA5NzcsImV4cCI6MTc4Njc5NDU3N30.Q-KkIykSVNnLz1mtN-zFWaeNfnoQt5h1Rl82kcGhvQs
+
+### Get feed posts from people you follow
+GET http://localhost:5000/api/posts/following-posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjg0MGQ4Ni02MjI3LTQxYmEtOGNiNy0zMTljYTI5MTY5NDIiLCJpYXQiOjE3ODgzOTk0NjEsImV4cCI6MTc4ODQwMzA2MX0.8CHETXDKLYkRLhNO6-hUlgVGBb4iKIQTxQwMwu1OTpo
+
+### Toggle like/unlike a post
+POST http://localhost:5000/api/posts/00b9ab4b-95bb-497f-9f8d-b7ef54953129/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYzljNDI1Ni1jMjM4LTQ4NGItYWU0YS1kOTY1NTM0OTEzMDUiLCJpYXQiOjE3ODg0MTM0MzYsImV4cCI6MTc4ODQxNzAzNn0.AS-g8ZVP2cKLgbwnA5brqkhKgzDD2Lzn55vbpGgzpUc
+
+### Add comment to a post
+POST http://localhost:5000/api/posts/00b9ab4b-95bb-497f-9f8d-b7ef54953129/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYzljNDI1Ni1jMjM4LTQ4NGItYWU0YS1kOTY1NTM0OTEzMDUiLCJpYXQiOjE3ODg5MTI3OTEsImV4cCI6MTc4ODkxNjM5MX0.ZgSlVZO_PEKlS8e8zkXVD9UMmJUmzg6i_J9ZQ0gAQ-g
+
+{
+  "text": "This is a comment on the post."
+}
+
+### Delete comment from a post
+DELETE http://localhost:5000/api/posts/5035f2aa-f92a-4d0b-bd7e-874a25bd1677/comments/00e9457b-dce4-4bba-8257-11f590b436d8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjg0MGQ4Ni02MjI3LTQxYmEtOGNiNy0zMTljYTI5MTY5NDIiLCJpYXQiOjE3ODkyNzUwMjAsImV4cCI6MTc4OTI3ODYyMH0.4hvzXU6SniReoTZ1nG5rN5vcKVe43CByx4rd8MeFhYE
+
+### Update comment on a post
+PUT http://localhost:5000/api/posts/comments/5ddb2571-2638-4081-a9ab-3af678378217
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYzljNDI1Ni1jMjM4LTQ4NGItYWU0YS1kOTY1NTM0OTEzMDUiLCJpYXQiOjE3ODkyNzU0NzcsImV4cCI6MTc4OTI3OTA3N30.UCSmaTE25d7qo9Eu88dQildulcY8vFQpIfzviP3L6ZM
+
+{
+  "text": "This is an updated comment."
+}
+
+### Get likes of a post
+GET http://localhost:5000/api/posts/5035f2aa-f92a-4d0b-bd7e-874a25bd1677/likes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYzljNDI1Ni1jMjM4LTQ4NGItYWU0YS1kOTY1NTM0OTEzMDUiLCJpYXQiOjE3ODkwMzEzOTksImV4cCI6MTc4OTAzNDk5OX0.YK_UD4FsBswcS9KbvmBprhQ_ZJlRX8de_CJVcmSiu2E
