@@ -66,7 +66,7 @@ export default function EditPostModal({
 
   const handleShowLikers = async () => {
     setShowLikers((prev) => !prev);
-    if (likers.length > 0) return;
+    if (likers?.length > 0) return;
     setLikersLoading(true);
     try {
       const data = await getPostLikes(post.id);
@@ -194,10 +194,10 @@ export default function EditPostModal({
             <div className="mb-3 border border-surface-muted rounded-md p-2 max-h-32 overflow-y-auto">
               {likersLoading ? (
                 <p className="text-xs text-muted">Loading...</p>
-              ) : likers.length === 0 ? (
+              ) : likers?.length === 0 ? (
                 <p className="text-xs text-muted">No likes yet.</p>
               ) : (
-                likers.map((liker) => (
+                likers?.map((liker) => (
                   <div key={liker.id} className="flex items-center gap-2 py-1">
                     {liker.avatar?.url ? (
                       <img
@@ -224,11 +224,11 @@ export default function EditPostModal({
             Comments ({post?.comments?.length})
           </h3>
 
-          {post.comments.length === 0 ? (
+          {post.comments?.length === 0 ? (
             <p className="text-sm text-muted">No comments yet.</p>
           ) : (
             <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
-              {post.comments.map((comment) => {
+              {post.comments?.map((comment) => {
                 const isCommentAuthor = comment.user.id === currentUser?.id;
                 const canDelete = isCommentAuthor || isPostOwner;
 
