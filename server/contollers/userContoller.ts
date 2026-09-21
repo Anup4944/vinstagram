@@ -118,7 +118,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     if (!existing) {
       return res.status(404).json({ error: "User not found" });
     }
-    if (email && email !== existing.email) {
+    if (email && email.toLowerCase() !== existing.email) {
       const taken = await prisma.user.findUnique({ where: { email } });
       if (taken) {
         return res.status(409).json({ error: "Email already in use" });
