@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import api from "../config/api";
 import toast from "react-hot-toast";
 import { PostContext } from "./PostContext";
-import type { Post, UpdatePostPayload, Comment, PostOwner } from "../types";
+import type { Post, UpdatePostPayload, PostComment, PostOwner } from "../types";
 
 export function PostProvider({ children }: { children: ReactNode }) {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -99,7 +99,10 @@ export function PostProvider({ children }: { children: ReactNode }) {
     setPosts([]);
   };
 
-  const addComment = async (postId: string, text: string): Promise<Comment> => {
+  const addComment = async (
+    postId: string,
+    text: string,
+  ): Promise<PostComment> => {
     try {
       const { data } = await api.post(`/posts/${postId}/comments`, { text });
       setPosts((prev) =>
@@ -109,7 +112,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
             : p,
         ),
       );
-      return data.comment as Comment;
+      return data.comment as PostComment;
     } catch (error: any) {
       toast.error(error?.response?.data?.error || "Failed to add comment");
       throw error;
@@ -129,7 +132,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
   const updateComment = async (
     commentId: string,
     text: string,
-  ): Promise<Comment> => {
+  ): Promise<PostComment> => {
     try {
       const { data } = await api.put(`/posts/comments/${commentId}`, { text });
 
@@ -142,7 +145,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
         })),
       );
 
-      return data.comment as Comment;
+      return data.comment as PostComment;
     } catch (error: any) {
       toast.error(error?.response?.data?.error || "Failed to fetch post likes");
       throw error;

@@ -5,11 +5,13 @@ import Modal from "./Modal";
 interface DeletePostModalProps {
   postId: string;
   onClose: () => void;
+  onConfirm?: () => void;
 }
 
 export default function DeletePostModal({
   postId,
   onClose,
+  onConfirm,
 }: DeletePostModalProps) {
   const { deletePost } = usePost();
   const [loading, setLoading] = useState(false);
@@ -19,6 +21,9 @@ export default function DeletePostModal({
     try {
       await deletePost(postId);
       onClose();
+      if (onConfirm) {
+        onConfirm();
+      }
     } catch (error) {
       console.error("Error deleting post:", error);
     } finally {

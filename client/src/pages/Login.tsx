@@ -8,7 +8,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   const [formData, setFormData] = useState({
     name: "jamess",
@@ -32,7 +31,6 @@ export default function Login() {
 
     const Reader = new FileReader();
     Reader.readAsDataURL(file);
-    setAvatarFile(file);
 
     Reader.onload = () => {
       if (Reader.readyState === 2) {

@@ -419,6 +419,7 @@ const UserProfile = () => {
       )}
       {activeModal === "deletePost" && activePost && (
         <DeletePostModal
+          postId={activePost.id}
           onClose={() => setActiveModal(null)}
           onConfirm={handleConfirmDeletePost}
         />
