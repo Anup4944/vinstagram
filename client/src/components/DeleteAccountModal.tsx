@@ -28,8 +28,15 @@ export default function DeleteAccountModal({
     onClose();
   };
   const handleOnDeleteAccount = async () => {
-    await deleteUser(userId, password);
-    handleClose();
+    setLoading(true);
+    try {
+      await deleteUser(userId, password);
+      handleClose();
+    } catch (error: any) {
+      console.error("Error deleting account:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

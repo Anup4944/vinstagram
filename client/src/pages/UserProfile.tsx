@@ -10,7 +10,7 @@ import EditPostModal from "../components/EditPostModal";
 import DeletePostModal from "../components/DeletePostModal";
 import DeleteAccountModal from "../components/DeleteAccountModal";
 import ChangePasswordModal from "../components/ChangePasswordModal";
-import type { Comment, Post, User } from "../types";
+import type { PostComment, Post, User } from "../types";
 import PostDetailModal from "../components/PostDetailModal";
 
 function formatJoinDate(isoDate?: string) {
@@ -118,11 +118,6 @@ const UserProfile = () => {
     setActiveModal(null);
   };
 
-  const handleDeleteAccount = () => {
-    setActiveModal(null);
-    // navigation/logout likely already handled inside deleteAccount() in AuthContext
-  };
-
   const openPostDetails = (post: Post) => {
     setActivePost(post);
     setActiveModal("post-details");
@@ -169,7 +164,7 @@ const UserProfile = () => {
     );
   };
 
-  const handleCommentUpdated = (postId: string, comment: Comment) => {
+  const handleCommentUpdated = (postId: string, comment: PostComment) => {
     setUserPosts((prev) =>
       prev.map((p) =>
         p.id === postId
@@ -208,7 +203,7 @@ const UserProfile = () => {
         : prev,
     );
   };
-  const handleCommentAdded = (postId: string, comment: Comment) => {
+  const handleCommentAdded = (postId: string, comment: PostComment) => {
     setUserPosts((prev) =>
       prev.map((p) =>
         p.id === postId ? { ...p, comments: [...p.comments, comment] } : p,
@@ -380,6 +375,7 @@ const UserProfile = () => {
       )}
       {activeModal === "delete" && (
         <DeleteAccountModal
+          userId={profileUser.id}
           isOpen={true}
           onClose={() => setActiveModal(null)}
         />

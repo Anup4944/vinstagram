@@ -13,8 +13,8 @@ interface PostDetailModalProps {
     likes: { id: string; userId: string }[],
   ) => void;
   onCommentDeleted?: (postId: string, commentId: string) => void;
-  onCommentUpdated?: (postId: string, comment: Comment) => void;
-  onCommentAdded?: (postId: string, comment: Comment) => void;
+  onCommentUpdated?: (postId: string, comment: PostComment) => void;
+  onCommentAdded?: (postId: string, comment: PostComment) => void;
 }
 
 export default function PostDetailModal({
@@ -96,7 +96,7 @@ export default function PostDetailModal({
       setEditingId(null);
       setEditText("");
     } catch (error) {
-      // toast already fired
+      console.log(error);
     }
   };
 

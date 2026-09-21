@@ -14,6 +14,6 @@ export type {
   UpdatePostPayload,
   PostImage,
   PostOwner,
-  Comment,
+  PostComment,
   Post,
 } from "./Post";

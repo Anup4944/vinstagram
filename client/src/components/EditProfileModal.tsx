@@ -20,20 +20,28 @@ export default function EditProfileModal({
   const [avatarPreview, setAvatarPreview] = useState(user?.avatar?.url);
   const { profileLoading, updateProfile } = useUser();
 
-  const handleAvatarChange = (e) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
-    reader.onload = () => setAvatarPreview(reader.result);
+    reader.onload = () => setAvatarPreview(reader.result as string);
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSave({ name, email, bio, avatar: avatarPreview });
-    await updateProfile({ name, email, bio, avatar: avatarPreview });
-    onClose();
+    try {
+      const updatedUser = await updateProfile({
+        name,
+        email,
+        bio,
+        avatar: avatarPreview,
+      });
+      onSave(updatedUser);
+      onClose();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

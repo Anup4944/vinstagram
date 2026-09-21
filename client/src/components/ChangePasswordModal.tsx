@@ -24,8 +24,15 @@ export default function ChangePasswordModal({
     onClose();
   };
   const handleOnChangePassword = async () => {
-    await changePassword(currentPassword, newPassword);
-    handleClose();
+    setLoading(true);
+    try {
+      await changePassword(currentPassword, newPassword);
+      handleClose();
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

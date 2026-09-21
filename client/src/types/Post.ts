@@ -11,7 +11,7 @@ export interface PostOwner {
   avatar?: { url: string } | null;
 }
 
-export interface Comment {
+export interface PostComment {
   id: string;
   text: string;
   createdAt: string;
@@ -24,7 +24,7 @@ export interface Post {
   image: PostImage | null;
   owner: PostOwner;
   likes: { id: string; userId: string }[];
-  comments: Comment[];
+  comments: PostComment[];
   createdAt: string;
 }
 
@@ -47,8 +47,8 @@ export interface PostContextType {
     postId: string,
   ) => Promise<{ likes: { id: string; userId: string }[] }>;
   clearPosts: () => void;
-  addComment: (postId: string, text: string) => Promise<Comment>;
+  addComment: (postId: string, text: string) => Promise<PostComment>;
   getPostLikes: (postId: string) => Promise<PostOwner[]>;
-  updateComment: (commentId: string, text: string) => Promise<Comment>;
+  updateComment: (commentId: string, text: string) => Promise<PostComment>;
   deleteComment: (postId: string, commentId: string) => Promise<void>;
 }

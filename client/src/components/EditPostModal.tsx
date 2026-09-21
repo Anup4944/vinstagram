@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Modal from "./Modal";
-import type { Comment, Post, PostOwner } from "../types";
+import type { Post, PostComment, PostOwner } from "../types";
 import { usePost } from "../hooks/usePosts";
 import { useAuth } from "../hooks/useAuth";
 
@@ -9,8 +9,8 @@ interface EditPostModalProps {
   onClose: () => void;
   onSave: (updatedPost: Post) => void;
   onCommentDeleted?: (postId: string, commentId: string) => void;
-  onCommentUpdated?: (postId: string, comment: Comment) => void;
-  onCommentAdded?: (postId: string, comment: Comment) => void;
+  onCommentUpdated?: (postId: string, comment: PostComment) => void;
+  onCommentAdded?: (postId: string, comment: PostComment) => void;
 }
 
 export default function EditPostModal({
@@ -60,7 +60,7 @@ export default function EditPostModal({
       onSave(updated);
       onClose();
     } catch (error) {
-      // toast already fired inside updatePost
+      console.log(error);
     }
   };
 
@@ -99,7 +99,7 @@ export default function EditPostModal({
       console.log(error);
     }
   };
-  const startEdit = (comment: Comment) => {
+  const startEdit = (comment: PostComment) => {
     setEditingId(comment.id);
     setEditText(comment.text);
   };

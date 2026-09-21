@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { usePost } from "../hooks/usePosts";
 import { useAuth } from "../hooks/useAuth";
-import type { Comment, PostOwner, Post as PostType } from "../types";
+import type { PostComment, PostOwner, Post as PostType } from "../types";
 import formatDate from "../helper/formateDate";
 
 export default function Post({ post }: { post: PostType }) {
@@ -62,7 +62,7 @@ export default function Post({ post }: { post: PostType }) {
     ? post?.comments
     : post?.comments?.slice(-1);
 
-  const startEdit = (comment: Comment) => {
+  const startEdit = (comment: PostComment) => {
     setEditingId(comment.id);
     setEditText(comment.text);
   };
