@@ -106,6 +106,10 @@ export const updateProfile = async (req: Request, res: Response) => {
 
     console.log(req.body);
 
+    console.log("=== updateProfile request body ===");
+    console.log({ name, email, bio, hasAvatar: !!avatar });
+    console.log("typeof email:", typeof email);
+
     const userId = req.user?.id;
 
     if (!userId) {
@@ -147,6 +151,13 @@ export const updateProfile = async (req: Request, res: Response) => {
         },
       };
     }
+
+    console.log("About to run prisma.user.update with data:", {
+      name: name || undefined,
+      email: email || undefined,
+      bio,
+      hasAvatarUpsert: !!avatarUpsert,
+    });
 
     const user = await prisma.user.update({
       where: { id: userId },
