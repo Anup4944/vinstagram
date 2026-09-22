@@ -28,7 +28,7 @@ export default function PostThumbnail({
         />
       )}
 
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors opacity-0 group-hover:opacity-100 flex flex-col justify-between">
+      <div className="absolute inset-0 bg-black/20 md:bg-black/0 md:group-hover:bg-black/50 md:opacity-0 md:group-hover:opacity-100 transition-colors flex flex-col justify-between">
         {isOwner && (
           <div className="flex items-center justify-end gap-2 p-2">
             {onEdit && (
@@ -82,12 +82,10 @@ export default function PostThumbnail({
           </div>
         )}
 
-        {/* Bottom: caption (non-owner only) */}
         {!isOwner && (
           <p className="text-xs text-white p-2 line-clamp-2">{post.caption}</p>
         )}
 
-        {/* Center: likes / comments stats */}
         <div className="flex-1 flex items-center justify-center gap-6">
           <span className="flex items-center gap-1.5 text-white text-sm font-semibold">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

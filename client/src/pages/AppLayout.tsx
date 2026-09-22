@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import BackToTopButton from "../components/BackToTop";
 
 const AppLayout = () => {
   return (
@@ -8,6 +9,7 @@ const AppLayout = () => {
       <main className="min-h-screen">
         <Outlet />
       </main>
+      <BackToTopButton />
     </>
   );
 };

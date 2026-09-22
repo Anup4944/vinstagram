@@ -81,7 +81,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     newPassword: string,
   ): Promise<void> => {
     try {
-      const { data } = await api.put(`/users/password/${user?.id}`, {
+      const { data } = await api.put(`/users/change-password`, {
         currentPassword,
         newPassword,
       });
