@@ -108,7 +108,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
       setPosts((prev) =>
         prev.map((p) =>
           p.id === postId
-            ? { ...p, comments: [...p.comments, data.comment] }
+            ? { ...p, comments: [...(p.comments ?? []), data.comment] }
             : p,
         ),
       );
@@ -139,7 +139,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
       setPosts((prev) =>
         prev.map((p) => ({
           ...p,
-          comments: p.comments.map((c) =>
+          comments: (p.comments ?? []).map((c) =>
             c.id === commentId ? data.comment : c,
           ),
         })),
@@ -161,7 +161,10 @@ export function PostProvider({ children }: { children: ReactNode }) {
       setPosts((prev) =>
         prev.map((p) =>
           p.id === postId
-            ? { ...p, comments: p.comments.filter((c) => c.id !== commentId) }
+            ? {
+                ...p,
+                comments: (p.comments ?? []).filter((c) => c.id !== commentId),
+              }
             : p,
         ),
       );

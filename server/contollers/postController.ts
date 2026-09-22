@@ -53,6 +53,15 @@ export const createPost = async (req: Request, res: Response) => {
         select: { id: true, name: true, avatar: true },
       },
       image: true,
+      likes: true,
+      comments: {
+        include: {
+          user: {
+            select: { id: true, name: true, avatar: true },
+          },
+        },
+        orderBy: { createdAt: "asc" },
+      },
     },
   });
 
