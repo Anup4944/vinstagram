@@ -104,6 +104,8 @@ export const updateProfile = async (req: Request, res: Response) => {
   try {
     const { name, email, bio, avatar } = req.body;
 
+    console.log(req.body);
+
     const userId = req.user?.id;
 
     if (!userId) {
@@ -124,13 +126,12 @@ export const updateProfile = async (req: Request, res: Response) => {
         return res.status(409).json({ error: "Email already in use" });
       }
     }
-    // Handle avatar upload if provided
     let avatarUpsert = undefined;
 
     if (avatar) {
       if (existing.avatar?.publicId) {
         try {
-          await cloudinary.uploader.destroy(existing.avatar.publicId);
+          await cloudinary.uploader.destroy(existing.avatar?.publicId);
         } catch (cloudErr) {
           console.error("Failed to delete old avatar:", cloudErr);
         }
@@ -205,12 +206,12 @@ export const deleteAccount = async (req: Request, res: Response) => {
     const publicUrlToDelete: string[] = [];
 
     if (user.avatar?.publicId) {
-      publicUrlToDelete.push(user.avatar.publicId);
+      publicUrlToDelete.push(user.avatar?.publicId);
     }
 
     for (const post of user.posts) {
       if (post.image?.publicId) {
-        publicUrlToDelete.push(post.image.publicId);
+        publicUrlToDelete.push(post.image?.publicId);
       }
     }
 
