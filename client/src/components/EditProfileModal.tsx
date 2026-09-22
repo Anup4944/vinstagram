@@ -19,10 +19,12 @@ export default function EditProfileModal({
   const [bio, setBio] = useState(user.bio);
   const [avatarPreview, setAvatarPreview] = useState(user?.avatar?.url);
   const { profileLoading, updateProfile } = useUser();
+  const [avatarChanged, setAvatarChanged] = useState(false);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setAvatarChanged(true);
     const reader = new FileReader();
     reader.onload = () => setAvatarPreview(reader.result as string);
     reader.readAsDataURL(file);
@@ -35,7 +37,7 @@ export default function EditProfileModal({
         name,
         email,
         bio,
-        avatar: avatarPreview,
+        avatar: avatarChanged ? avatarPreview : undefined,
       });
       onSave(updatedUser);
       onClose();
