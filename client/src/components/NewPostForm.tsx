@@ -30,8 +30,6 @@ const NewPostForm = () => {
     e.preventDefault();
     if (!imageFile || !caption.trim()) return;
 
-    console.log("New post:", { imageFile, caption });
-
     await createPost(caption, imagePreview);
     setSubmitted(true);
     setImageFile(null);

@@ -247,7 +247,7 @@ export const getFeedPosts = async (req: Request, res: Response) => {
     const followingIds = following.map((f) => f.followingId);
 
     const posts = await prisma.post.findMany({
-      where: { ownerId: { in: followingIds } },
+      where: { ownerId: { in: [...followingIds, userId] } },
       orderBy: { createdAt: "desc" },
       include: {
         owner: { select: { id: true, name: true, avatar: true } },
