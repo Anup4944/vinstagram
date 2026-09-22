@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../config/prisma.js";
 import bcrypt from "bcrypt";
 import cloudinary from "../config/cloudinary.js";
+import { getErrorMessage } from "../utils/getErrorMessage.js";
 
 const userSelect = {
   id: true,
@@ -45,7 +46,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
     res.status(200).json({ users: usersWithFollowStatus });
   } catch (error) {
     console.error("Get all users error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -95,7 +96,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Get user error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -163,7 +164,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Update profile error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -236,7 +237,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {
     console.error("Delete account error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 // PUT /api/users/password/:id
@@ -283,7 +284,7 @@ export const changePassword = async (req: Request, res: Response) => {
     return res.status(200).json({ message: "Password changed successfully" });
   } catch (error) {
     console.error("Change password error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -359,7 +360,7 @@ export const toggleFollow = async (req: Request, res: Response) => {
     }
   } catch (error) {
     console.error("Follow user error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -381,7 +382,7 @@ export const getFollowers = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Get followers error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -403,6 +404,6 @@ export const getFollowing = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Get following error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };

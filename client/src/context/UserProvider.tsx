@@ -10,6 +10,7 @@ import type {
   ToggleFollowResponse,
 } from "../types";
 import { useNavigate } from "react-router-dom";
+import { getErrorMessage } from "../helper/getErrorMessage";
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<User[]>([]);
@@ -22,8 +23,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     try {
       const { data } = await api.get(`/users/${userId}`);
       return data.user as User;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -33,9 +34,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
     try {
       const { data } = await api.get("/users");
       setUsers(data.users);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setUsersLoading(false);
-      toast.error(error?.response?.data?.error);
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -50,9 +51,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("user", JSON.stringify(data.user));
       toast.success(data.message || "Profile updated successfully!");
       return data.user as User;
-    } catch (error: any) {
+    } catch (error: unknown) {
       setProfileLoading(false);
-      toast.error(error?.response?.data?.error);
+      toast.error(getErrorMessage(error));
       throw error;
     } finally {
       setProfileLoading(false);
@@ -69,8 +70,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem("user");
       toast.success("User deleted successfully!");
       navigate("/login");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -86,8 +87,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
       });
 
       toast.success(data.message || "Password changed successfully!");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -106,8 +107,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
       toast.success(data.message || "Follow status updated successfully!");
 
       return data as ToggleFollowResponse;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -116,8 +117,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     try {
       const { data } = await api.get(`/users/${userId}/followers`);
       return data.followers as FollowUser[];
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -126,8 +127,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     try {
       const { data } = await api.get(`/users/${userId}/following`);
       return data.following as FollowUser[];
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };

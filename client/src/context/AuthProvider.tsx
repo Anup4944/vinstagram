@@ -4,6 +4,7 @@ import api from "../config/api";
 import toast from "react-hot-toast";
 import { AuthContext } from "./AuthContext";
 import type { User } from "../types";
+import { getErrorMessage } from "../helper/getErrorMessage";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -37,9 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("user", JSON.stringify(data.user));
       toast.success(`${data.user.name}, logged in successfully!`);
       navigate("/");
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
-      toast.error(error?.response?.data?.error || "Login failed");
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -65,9 +66,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("user", JSON.stringify(data.user));
       toast.success(`${data.user.name}, registration successful!`);
       navigate("/");
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
-      toast.error(error?.response?.data?.error || error?.message);
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -94,9 +95,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { data } = await api.post("/auth/forgot-password", { email });
       toast.success(data.message);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
-      toast.error(error?.response?.data?.error || error?.message);
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -112,9 +113,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       toast.success(data.message);
       navigate("/login");
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
-      toast.error(error?.response?.data?.error || error?.message);
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };

@@ -6,6 +6,7 @@ const NewPostForm = () => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [caption, setCaption] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { createPost } = usePost();
 
@@ -30,8 +31,15 @@ const NewPostForm = () => {
     e.preventDefault();
     if (!imageFile || !caption.trim()) return;
 
-    await createPost(caption, imagePreview);
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      await createPost(caption, imagePreview);
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Error creating post:", error);
+    } finally {
+      setLoading(false);
+    }
     setImageFile(null);
     setImagePreview("");
     setCaption("");
@@ -121,10 +129,10 @@ const NewPostForm = () => {
         {/* Submit */}
         <button
           type="submit"
-          disabled={!canSubmit}
+          disabled={!canSubmit || loading}
           className="self-end text-sm font-semibold text-inverted bg-brand hover:bg-brand-dark disabled:bg-surface-muted disabled:text-muted disabled:cursor-not-allowed px-4 py-2 rounded-md transition-colors"
         >
-          {submitted ? "Posted!" : "Share post"}
+          {loading ? "Posting..." : submitted ? "Posted!" : "Share post"}
         </button>
       </form>
     </div>

@@ -3,6 +3,7 @@ import api from "../config/api";
 import toast from "react-hot-toast";
 import { PostContext } from "./PostContext";
 import type { Post, UpdatePostPayload, PostComment, PostOwner } from "../types";
+import { getErrorMessage } from "../helper/getErrorMessage";
 
 export function PostProvider({ children }: { children: ReactNode }) {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -15,9 +16,9 @@ export function PostProvider({ children }: { children: ReactNode }) {
       setPosts((prev) => [data.post, ...prev]);
       toast.success(data.message || "Post created successfully!");
       return data.post as Post;
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
-      toast.error(error?.response?.data?.error || "Failed to create post");
+      toast.error(getErrorMessage(error));
       throw error;
     } finally {
       setLoading(false);
@@ -28,8 +29,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       const { data } = await api.get("/posts/feed");
       setPosts(data.posts);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to fetch feed posts");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -40,8 +41,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       const { data } = await api.get(`/posts/user/${userId}`);
       return data.posts as Post[];
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to fetch posts");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     } finally {
       setLoading(false);
@@ -63,8 +64,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
 
       toast.success(data.message || "Post updated successfully!");
       return data.post as Post;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to update post");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     } finally {
       setLoading(false);
@@ -75,8 +76,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
     try {
       const { data } = await api.delete(`/posts/${postId}`);
       toast.success(data.message || "Post updated successfully!");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to delete post");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -89,8 +90,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
         prev.map((p) => (p.id === postId ? { ...p, likes: data.likes } : p)),
       );
       return data;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to fetch posts");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -113,8 +114,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
         ),
       );
       return data.comment as PostComment;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to add comment");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -123,8 +124,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
     try {
       const { data } = await api.get(`/posts/${postId}/likes`);
       return data.likes as PostOwner[];
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to fetch post likes");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -146,8 +147,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
       );
 
       return data.comment as PostComment;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to fetch post likes");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };
@@ -168,8 +169,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
             : p,
         ),
       );
-    } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to delete comment");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       throw error;
     }
   };

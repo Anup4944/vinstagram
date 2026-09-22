@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import cloudinary from "../config/cloudinary.js";
 import crypto from "crypto";
 import { sendResetPasswordEmail } from "../utils/sendEmail.js";
+import { getErrorMessage } from "../utils/getErrorMessage.js";
 
 const generateJwtToken = (userId: string) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET as string, {
@@ -65,8 +66,7 @@ export const registerUser = async (req: Request, res: Response) => {
       token,
     });
   } catch (error) {
-    console.error("Register error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -82,10 +82,10 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     // Validate email format
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(email)) {
-    //   return res.status(400).json({ error: "Invalid email format" });
-    // }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
 
     // Validate password length
     if (password.length < 6) {
@@ -133,7 +133,7 @@ export const loginUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -179,7 +179,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Forgot password error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -226,6 +226,6 @@ export const resetPassword = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Password reset successfully" });
   } catch (error) {
     console.error("Reset password error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };

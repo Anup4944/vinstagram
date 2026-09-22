@@ -1,14 +1,19 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma.js";
 import cloudinary from "../config/cloudinary.js";
+import { getErrorMessage } from "../utils/getErrorMessage.js";
 
 // GET /api/posts
 export const getAllPosts = async (req: Request, res: Response) => {
-  const posts = await prisma.post.findMany();
-  if (posts.length === 0) {
-    return res.status(404).json({ error: "No posts found" });
+  try {
+    const posts = await prisma.post.findMany();
+    if (posts.length === 0) {
+      return res.status(404).json({ error: "No posts found" });
+    }
+    res.json({ posts });
+  } catch (error) {
+    res.status(500).json({ error: getErrorMessage(error) });
   }
-  res.json({ posts });
 };
 
 // POST /api/posts
@@ -189,7 +194,7 @@ export const updatePost = async (req: Request, res: Response) => {
       post,
     });
   } catch (error) {
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -234,7 +239,7 @@ export const deletePost = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -272,7 +277,7 @@ export const getFeedPosts = async (req: Request, res: Response) => {
     res.status(200).json({ posts });
   } catch (error) {
     console.error("Get feed posts error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -302,7 +307,7 @@ export const toggleLike = async (req: Request, res: Response) => {
 
     res.status(200).json({ likes });
   } catch (error) {
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -354,7 +359,7 @@ export const addComment = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Add comment error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -399,7 +404,7 @@ export const deleteComment = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Comment deleted successfully" });
   } catch (error) {
     console.error("Delete comment error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -436,7 +441,7 @@ export const getPostLikes = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Get post likes error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };
 
@@ -487,6 +492,6 @@ export const updateComment = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Update comment error:", error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 };

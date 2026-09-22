@@ -10,10 +10,10 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
-    name: "jamess",
-    email: "jamess@example.com",
-    password: "secret123",
-    bio: "New here",
+    name: "",
+    email: "",
+    password: "",
+    bio: "",
     avatar: "",
   });
 
