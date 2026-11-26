@@ -3,6 +3,9 @@ import { useAuth } from "../hooks/useAuth";
 import { toast } from "react-hot-toast/headless";
 import { Link } from "react-router-dom";
 
+const BG_IMAGE =
+  "https://images.unsplash.com/vector-1738504244597-24b1c270750e?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
 export default function Login() {
   const [isLoginState, setIsLoginState] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -41,7 +44,6 @@ export default function Login() {
 
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
     if (!isLoginState && !formData.name.trim()) {
@@ -91,40 +93,32 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex">
-      {/* left */}
-      <div className="hidden lg:flex lg:w-1/2 bg-app-green relative items-center justify-center ">
-        <img
-          src={
-            "https://images.unsplash.com/vector-1738504244597-24b1c270750e?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          }
-          alt=""
-          className="absolute inset-0 object-cover w-full h-full bg-center opacity-10"
-        />
-        <div className="hidden lg:flex lg:w-1/2 bg-app-green relative items-center justify-center">
+      {/* Same layout on every screen size: full-bleed image, heading, form card */}
+      <div className="relative flex-1 flex items-center justify-center px-4 py-10 sm:p-8">
+        {/* Background image */}
+        <div className="fixed inset-0" aria-hidden="true">
           <img
-            src={
-              "https://images.unsplash.com/vector-1738504244597-24b1c270750e?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            }
+            src={BG_IMAGE}
             alt=""
-            className="absolute inset-0 object-cover w-full h-full bg-center opacity-10"
+            className="w-full h-full object-cover"
           />
-          <div className="relative text-center px-12">
-            <h2 className="text-4xl font-semibold text-gray-800 mb-4">
+          <div className="absolute inset-0 bg-linear-to-b from-gray-900/80 via-gray-900/60 to-gray-900/85" />
+        </div>
+
+        <div className="relative max-w-md w-full">
+          {/* Heading */}
+          <div className="text-center mb-8 px-2">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tight mb-3 drop-shadow-sm">
               {isLoginState ? "Welcome to Vinstagram" : "Join us today"}
             </h2>
-
-            <p className="text-lg text-gray-500">
+            <p className="text-sm sm:text-base lg:text-lg text-gray-200 leading-relaxed max-w-sm mx-auto">
               {isLoginState
                 ? "Where you can scroll for hours and still find nothing worth liking."
                 : "Sign up to see what everyone's been up to, except you."}
             </p>
           </div>
-        </div>
-      </div>
 
-      {/* right */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="max-w-md w-full">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl ring-1 ring-black/5 p-6 sm:p-8">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
             {isLoginState ? "Login" : "Sign Up"}
           </h1>
@@ -300,6 +294,7 @@ export default function Login() {
               </Link>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>

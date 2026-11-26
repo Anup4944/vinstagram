@@ -30,7 +30,6 @@ type ModalType =
   | "following"
   | "editPost"
   | "deletePost"
-  | "comments"
   | "post-details"
   | null;
 
@@ -133,11 +132,15 @@ const UserProfile = () => {
     setActiveModal("deletePost");
   };
 
+  // Called optimistically by EditPostModal (before the API call) and again
+  // with the server's copy (or the original, to roll back)
   const handleSavePost = (updatedPost: Post) => {
     setUserPosts((prev) =>
       prev.map((p) => (p.id === updatedPost.id ? updatedPost : p)),
     );
-    setActiveModal(null);
+    setActivePost((prev) =>
+      prev && prev.id === updatedPost.id ? updatedPost : prev,
+    );
   };
 
   const handleConfirmDeletePost = () => {
@@ -145,11 +148,6 @@ const UserProfile = () => {
     setUserPosts((prev) => prev.filter((p) => p.id !== activePost.id));
     setActiveModal(null);
     setActivePost(null);
-  };
-
-  const openComments = (post: Post) => {
-    setActivePost(post);
-    setActiveModal("comments");
   };
 
   const handleLikeToggled = (
@@ -343,15 +341,11 @@ const UserProfile = () => {
                 <PostThumbnail
                   key={post.id}
                   post={post}
-                  onEdit={
-                    isOwnProfile
-                      ? () => openEditPost(post)
-                      : () => openPostDetails(post)
-                  }
+                  onEdit={isOwnProfile ? () => openEditPost(post) : undefined}
                   onDelete={
                     isOwnProfile ? () => openDeletePost(post) : undefined
                   }
-                  onOpenComments={() => openComments(post)}
+                  onOpen={() => openPostDetails(post)}
                 />
               ))}
             </div>

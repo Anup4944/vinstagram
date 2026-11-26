@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Modal from "./Modal";
-import type { Post, PostComment, PostOwner } from "../types";
+import LikesModal from "./LikesModal";
+import type { Post, PostComment } from "../types";
 import { usePost } from "../hooks/usePosts";
 import { useAuth } from "../hooks/useAuth";
 
@@ -27,13 +28,15 @@ export default function EditPostModal({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
 
-  const [likers, setLikers] = useState<PostOwner[]>([]);
-  const [showLikers, setShowLikers] = useState(false);
-  const [likersLoading, setLikersLoading] = useState(false);
+  const [showLikes, setShowLikes] = useState(false);
 
   const [commentText, setCommentText] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [commentSubmitting, setCommentSubmitting] = useState(false);
+  const [editSaving, setEditSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const { updatePost, getPostLikes, addComment, deleteComment, updateComment } =
+  const { updatePost, addComment, deleteComment, updateComment } =
     usePost();
   const { user: currentUser } = useAuth();
 
@@ -51,52 +54,67 @@ export default function EditPostModal({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (saving || !caption.trim()) return;
+
+    const original = post;
+    const payload = {
+      id: post.id,
+      caption: caption.trim(),
+      image: imageFile ? imagePreview : undefined, // only send if a new file was chosen
+    };
+
+    // Caption-only edits are optimistic: show the change and close right away.
+    // A new image has to upload first, so that path waits with the button disabled.
+    if (!imageFile) {
+      onSave({ ...original, caption: payload.caption });
+      onClose();
+      try {
+        const updated = await updatePost(payload);
+        onSave({ ...original, ...updated });
+      } catch {
+        onSave(original); // roll back; provider already showed the error toast
+      }
+      return;
+    }
+
+    setSaving(true);
     try {
-      const updated = await updatePost({
-        id: post.id,
-        caption,
-        image: imageFile ? imagePreview : undefined, // only send if a new file was chosen
-      });
-      onSave(updated);
+      const updated = await updatePost(payload);
+      onSave({ ...original, ...updated });
       onClose();
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const handleShowLikers = async () => {
-    setShowLikers((prev) => !prev);
-    if (likers?.length > 0) return;
-    setLikersLoading(true);
-    try {
-      const data = await getPostLikes(post.id);
-      setLikers(data);
-    } catch (error) {
-      // toast already fired
     } finally {
-      setLikersLoading(false);
+      setSaving(false);
     }
   };
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = commentText.trim();
-    if (!text) return;
+    if (!text || commentSubmitting) return;
+    setCommentSubmitting(true);
     try {
       const newComment = await addComment(post.id, text);
       onCommentAdded?.(post.id, newComment);
       setCommentText("");
     } catch (error) {
       console.log(error);
+    } finally {
+      setCommentSubmitting(false);
     }
   };
 
   const handleDeleteComment = async (commentId: string) => {
+    if (deletingId) return;
+    setDeletingId(commentId);
     try {
       await deleteComment(post.id, commentId);
       onCommentDeleted?.(post.id, commentId);
     } catch (error) {
       console.log(error);
+    } finally {
+      setDeletingId(null);
     }
   };
   const startEdit = (comment: PostComment) => {
@@ -110,14 +128,17 @@ export default function EditPostModal({
   };
 
   const saveEdit = async (commentId: string) => {
-    if (!editText.trim()) return;
+    if (!editText.trim() || editSaving) return;
+    setEditSaving(true);
     try {
       const updated = await updateComment(commentId, editText.trim());
-      onCommentUpdated?.(post.id, updated); // ✅ if you added the callback from the last message
+      onCommentUpdated?.(post.id, updated);
       setEditingId(null);
       setEditText("");
-    } catch (error) {
+    } catch {
       // toast already fired
+    } finally {
+      setEditSaving(false);
     }
   };
 
@@ -149,6 +170,7 @@ export default function EditPostModal({
             type="file"
             accept="image/*"
             onChange={handleImageChange}
+            disabled={saving}
             className="hidden"
           />
 
@@ -160,7 +182,8 @@ export default function EditPostModal({
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 text-sm bg-surface-muted rounded-md outline-none text-body focus:ring-2 focus:ring-brand resize-none"
+              disabled={saving}
+              className="w-full px-3 py-2 text-sm bg-surface-muted rounded-md outline-none text-body focus:ring-2 focus:ring-brand resize-none disabled:opacity-60"
             />
           </div>
 
@@ -168,15 +191,18 @@ export default function EditPostModal({
             <button
               type="button"
               onClick={onClose}
-              className="text-sm font-medium text-body bg-surface-muted hover:bg-surface-muted/70 px-4 py-2 rounded-md transition-colors"
+              disabled={saving}
+              className="text-sm font-medium text-body bg-surface-muted hover:bg-surface-muted/70 px-4 py-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="text-sm font-semibold text-inverted bg-brand hover:bg-brand-dark px-4 py-2 rounded-md transition-colors"
+              disabled={saving || !caption.trim()}
+              aria-busy={saving}
+              className="text-sm font-semibold text-inverted bg-brand hover:bg-brand-dark px-4 py-2 rounded-md transition-colors disabled:bg-surface-muted disabled:text-muted disabled:cursor-not-allowed"
             >
-              Save changes
+              {saving ? "Saving..." : "Save changes"}
             </button>
           </div>
         </form>
@@ -184,37 +210,18 @@ export default function EditPostModal({
         {/* Likes */}
         <div className="border-t border-surface-muted pt-3">
           <button
-            onClick={handleShowLikers}
+            onClick={() => setShowLikes(true)}
             className="text-sm font-semibold text-body hover:underline mb-2"
           >
-            {/* {post.likes.length} {post.likes.length === 1 ? "like" : "likes"} */}
+            {post.likes?.length ?? 0}{" "}
+            {post.likes?.length === 1 ? "like" : "likes"}
           </button>
 
-          {showLikers && (
-            <div className="mb-3 border border-surface-muted rounded-md p-2 max-h-32 overflow-y-auto">
-              {likersLoading ? (
-                <p className="text-xs text-muted">Loading...</p>
-              ) : likers?.length === 0 ? (
-                <p className="text-xs text-muted">No likes yet.</p>
-              ) : (
-                likers?.map((liker) => (
-                  <div key={liker.id} className="flex items-center gap-2 py-1">
-                    {liker.avatar?.url ? (
-                      <img
-                        src={liker.avatar.url}
-                        alt={liker.name}
-                        className="w-6 h-6 rounded-full object-cover"
-                      />
-                    ) : (
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand text-inverted text-xs font-semibold">
-                        {liker.name.charAt(0).toUpperCase()}
-                      </span>
-                    )}
-                    <span className="text-sm text-body">{liker.name}</span>
-                  </div>
-                ))
-              )}
-            </div>
+          {showLikes && (
+            <LikesModal
+              postId={post.id}
+              onClose={() => setShowLikes(false)}
+            />
           )}
         </div>
 
@@ -244,17 +251,22 @@ export default function EditPostModal({
                           value={editText}
                           onChange={(e) => setEditText(e.target.value)}
                           autoFocus
-                          className="w-full px-2 py-1.5 text-sm bg-surface-muted rounded-md outline-none text-body focus:ring-2 focus:ring-brand"
+                          disabled={editSaving}
+                          className="w-full px-2 py-1.5 text-sm bg-surface-muted rounded-md outline-none text-body focus:ring-2 focus:ring-brand disabled:opacity-60"
                         />
                         <div className="flex gap-2">
                           <button
+                            type="button"
                             onClick={() => saveEdit(comment.id)}
-                            className="text-xs font-semibold text-inverted bg-brand hover:bg-brand-dark px-3 py-1 rounded-md transition-colors"
+                            disabled={editSaving || !editText.trim()}
+                            className="text-xs font-semibold text-inverted bg-brand hover:bg-brand-dark px-3 py-1 rounded-md transition-colors disabled:bg-surface-muted disabled:text-muted disabled:cursor-not-allowed"
                           >
-                            Save
+                            {editSaving ? "Saving..." : "Save"}
                           </button>
                           <button
+                            type="button"
                             onClick={cancelEdit}
+                            disabled={editSaving}
                             className="text-xs font-medium text-body bg-surface-muted hover:bg-surface-muted/70 px-3 py-1 rounded-md transition-colors"
                           >
                             Cancel
@@ -280,10 +292,14 @@ export default function EditPostModal({
                           )}
                           {canDelete && (
                             <button
+                              type="button"
                               onClick={() => handleDeleteComment(comment.id)}
-                              className="text-xs font-medium text-muted hover:text-danger transition-colors"
+                              disabled={deletingId !== null}
+                              className="text-xs font-medium text-muted hover:text-danger transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              Delete
+                              {deletingId === comment.id
+                                ? "Deleting..."
+                                : "Delete"}
                             </button>
                           )}
                         </div>
@@ -304,14 +320,15 @@ export default function EditPostModal({
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Add a comment..."
-              className="flex-1 text-sm outline-none text-body placeholder:text-muted"
+              disabled={commentSubmitting}
+              className="flex-1 text-sm outline-none text-body placeholder:text-muted bg-transparent disabled:opacity-60"
             />
             <button
               type="submit"
-              disabled={!commentText.trim()}
+              disabled={!commentText.trim() || commentSubmitting}
               className="text-sm font-semibold text-brand disabled:text-muted disabled:cursor-not-allowed"
             >
-              Post
+              {commentSubmitting ? "Posting..." : "Post"}
             </button>
           </form>
         </div>
