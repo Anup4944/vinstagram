@@ -4,21 +4,30 @@ interface PostThumbnailProps {
   post: Post;
   onEdit?: () => void;
   onDelete?: () => void;
-  onOpenComments: () => void;
+  onOpen: () => void;
 }
 
 export default function PostThumbnail({
   post,
   onEdit,
   onDelete,
-  onOpenComments,
+  onOpen,
 }: PostThumbnailProps) {
   const isOwner = !!onEdit || !!onDelete;
 
   return (
     <div
-      className="relative aspect-square overflow-hidden rounded group"
-      onClick={onOpenComments}
+      role="button"
+      tabIndex={0}
+      aria-label={`Open post: ${post.caption}`}
+      className="relative aspect-square overflow-hidden rounded group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+      onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
     >
       {post.image?.url && (
         <img

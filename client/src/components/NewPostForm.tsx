@@ -29,33 +29,36 @@ const NewPostForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!imageFile || !caption.trim()) return;
+    if (!imageFile || !caption.trim() || loading) return;
 
     setLoading(true);
     try {
       await createPost(caption, imagePreview);
+      // Only clear the form on success so a failed post can be retried
+      setImageFile(null);
+      setImagePreview("");
+      setCaption("");
       setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 2000);
     } catch (error) {
       console.error("Error creating post:", error);
     } finally {
       setLoading(false);
     }
-    setImageFile(null);
-    setImagePreview("");
-    setCaption("");
   };
 
   const canSubmit = imageFile !== null && caption.trim() !== "";
 
   return (
-    <div className="bg-surface border border-surface-muted rounded-lg overflow-hidden mb-6 max-w-md mx-auto">
+    <div className="bg-surface border border-surface-muted rounded-xl shadow-sm overflow-hidden w-full">
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 p-4">
+        <h2 className="text-sm font-semibold text-body">Create a post</h2>
         {/* Image upload */}
         <div>
           {!imagePreview ? (
             <label
               htmlFor="imageFile"
-              className="flex flex-col items-center justify-center gap-2 w-full aspect-square rounded-md border-2 border-dashed border-surface-muted bg-surface-muted/50 hover:bg-surface-muted cursor-pointer transition-colors"
+              className="flex flex-col items-center justify-center gap-2 w-full h-40 rounded-lg border-2 border-dashed border-gray-200 bg-surface-muted/50 hover:bg-surface-muted hover:border-brand-light cursor-pointer transition-colors"
             >
               <svg
                 className="w-8 h-8 text-muted"
@@ -93,7 +96,8 @@ const NewPostForm = () => {
               <button
                 type="button"
                 onClick={handleRemoveImage}
-                className="absolute top-2 right-2 flex items-center justify-center h-7 w-7 rounded-full bg-surface-dark/70 text-inverted hover:bg-danger transition-colors"
+                disabled={loading}
+                className="disabled:hidden absolute top-2 right-2 flex items-center justify-center h-7 w-7 rounded-full bg-surface-dark/70 text-inverted hover:bg-danger transition-colors"
                 aria-label="Remove image"
               >
                 <svg
@@ -121,8 +125,9 @@ const NewPostForm = () => {
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             placeholder="Write a caption..."
-            rows={3}
-            className="w-full px-3 py-2 text-sm bg-surface-muted rounded-md outline-none text-body placeholder:text-muted focus:ring-2 focus:ring-brand resize-none"
+            rows={2}
+            disabled={loading}
+            className="w-full px-3 py-2 text-sm bg-surface-muted rounded-md outline-none text-body placeholder:text-muted focus:ring-2 focus:ring-brand resize-none disabled:opacity-60"
           />
         </div>
 
@@ -130,6 +135,7 @@ const NewPostForm = () => {
         <button
           type="submit"
           disabled={!canSubmit || loading}
+          aria-busy={loading}
           className="self-end text-sm font-semibold text-inverted bg-brand hover:bg-brand-dark disabled:bg-surface-muted disabled:text-muted disabled:cursor-not-allowed px-4 py-2 rounded-md transition-colors"
         >
           {loading ? "Posting..." : submitted ? "Posted!" : "Share post"}

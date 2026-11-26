@@ -28,11 +28,17 @@ const Navbar = () => {
             to={`/profile/${user?.id}`}
             className="flex items-center space-x-2"
           >
-            <img
-              src={`${user?.avatar?.url}`}
-              alt={"pp"}
-              className="w-10 h-10 rounded-full object-cover"
-            />
+            {user?.avatar?.url ? (
+              <img
+                src={user.avatar.url}
+                alt={user.name}
+                className="w-20 h-20 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-brand text-inverted flex items-center justify-center text-2xl font-bold shrink-0">
+                {user?.name.charAt(0).toUpperCase()}
+              </div>
+            )}
           </Link>
           <button
             onClick={handleLogout}

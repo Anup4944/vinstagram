@@ -2,7 +2,8 @@ import transporter from "../config/nodemailer.js";
 
 export async function sendResetPasswordEmail(to: string, resetLink: string) {
   await transporter.sendMail({
-    from: `"Social App" <${process.env.SMTP_USER}>`,
+    // SMTP_FROM must be an address the SMTP account may send as (for Gmail, the Gmail address itself)
+    from: `"Vinstagram" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
     to,
     subject: "Reset your password",
     html: `

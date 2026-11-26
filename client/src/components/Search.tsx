@@ -3,6 +3,7 @@ import { useUser } from "../hooks/useUser";
 import { useAuth } from "../hooks/useAuth";
 import { usePost } from "../hooks/usePosts";
 import { Link } from "react-router-dom";
+import { Search as SearchIcon } from "lucide-react";
 
 export default function SearchUsers() {
   const [query, setQuery] = useState("");
@@ -37,10 +38,14 @@ export default function SearchUsers() {
     .filter((u) => u.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <div className="bg-surface border border-surface-muted rounded-lg p-4 sticky top-4">
-      <h2 className="text-sm font-semibold text-body mb-3">Search</h2>
+    <div className="bg-surface border border-surface-muted rounded-xl p-4 shadow-sm">
+      <h2 className="text-sm font-semibold text-body mb-3">Find people</h2>
 
       <div className="relative mb-4">
+        <SearchIcon
+          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted pointer-events-none"
+          aria-hidden="true"
+        />
         <input
           type="text"
           value={query}
@@ -50,7 +55,7 @@ export default function SearchUsers() {
         />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 lg:max-h-[calc(100vh-14rem)] lg:overflow-y-auto">
         {filteredUsers.length === 0 ? (
           <p className="text-sm text-muted py-2">No users found</p>
         ) : (
